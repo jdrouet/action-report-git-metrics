@@ -32,7 +32,7 @@ runs:
       with:
         comment_tag: metrics
         message: |
-          🦀 This is how your metrics evolved
+          📈 This is how your metrics evolved 📉
 
           ```
           ${{ fromJson(steps.execution.outputs.result)[0].stdout }}
