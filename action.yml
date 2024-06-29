@@ -13,10 +13,6 @@ inputs:
     description: "Tag to use for later updates"
     required: false
     default: "git-metrics"
-  range:
-    description: "The range to use for executing diff"
-    required: false
-    default: "origin/$GITHUB_BASE_REF..HEAD"
 
 runs:
   using: composite
@@ -25,7 +21,7 @@ runs:
       id: execution
       with:
         pull: "true"
-        script: diff ${{ inputs.range }}
+        script: diff origin/$GITHUB_BASE_REF..HEAD
 
     - name: commenting pull request
       uses: thollander/actions-comment-pull-request@v2
