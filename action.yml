@@ -13,6 +13,10 @@ inputs:
     description: "Tag to use for later updates"
     required: false
     default: "git-metrics"
+  base_ref:
+    description: "The base ref to compare head to"
+    required: true
+    default: "$GITHUB_BASE_REF"
 
 runs:
   using: composite
@@ -21,12 +25,12 @@ runs:
       id: execution
       with:
         pull: "true"
-        script: diff origin/$GITHUB_BASE_REF..HEAD
+        script: diff origin/${{ inputs.base_ref }}..HEAD
 
     - name: commenting pull request
       uses: thollander/actions-comment-pull-request@v2
       with:
-        comment_tag: metrics
+        comment_tag: ${{ inputs.comment_tag }}
         message: |
           📈 This is how your metrics evolved 📉
 
