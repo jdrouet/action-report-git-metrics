@@ -1,0 +1,39 @@
+name: "git-metrics report in pull request"
+description: "A GitHub action to report metrics in pull request"
+author: "Jeremie Drouet <jeremie.drouet@gmail.com>"
+
+# Add your action's branding here. This will appear on the GitHub Marketplace.
+branding:
+  icon: "bar-chart"
+  color: "blue"
+
+# Define your inputs here.
+inputs:
+  comment_tag:
+    description: "Tag to use for later updates"
+    required: false
+    default: "git-metrics"
+  range:
+    description: "The range to use for executing diff"
+    required: false
+    default: "origin/$GITHUB_BASE_REF..HEAD"
+
+runs:
+  using: composite
+  steps:
+    - uses: jdrouet/action-execute-git-metrics
+      id: execution
+      with:
+        pull: "true"
+        script: diff ${{ inputs.range }}
+
+    - name: commenting pull request
+      uses: thollander/actions-comment-pull-request@v2
+      with:
+        comment_tag: metrics
+        message: |
+          🦀 This is how your metrics evolved
+
+          ```
+          ${{ fromJson(steps.execution.outputs.result)[0].stdout }}
+          ```
