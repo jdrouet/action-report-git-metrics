@@ -17,11 +17,13 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: jdrouet/action-execute-git-metrics@main
-      id: execution
-      with:
-        pull: "true"
-        script: diff origin/${{ github.base_ref }}..HEAD
+    - name: output git-metrics
+      shell: bash
+      id: diff
+      run: |
+        echo "metrics<<EOF" >> $GITHUB_OUTPUT
+        git-metrics diff origin/$GITHUB_BASE_REF..HEAD >> $GITHUB_OUTPUT
+        echo EOF >> $GITHUB_OUTPUT
 
     - name: commenting pull request
       uses: thollander/actions-comment-pull-request@v2
@@ -31,5 +33,5 @@ runs:
           📈 This is how your metrics evolved 📉
 
           ```
-          ${{ fromJson(steps.execution.outputs.result)[0].stdout }}
+          ${{ steps.diff.outputs.metrics }}
           ```
